@@ -5,16 +5,20 @@
 # library in `~/.skillcaddy/library`, so `brew upgrade` cannot touch it
 # (see docs/adr/0012-decoupled-code-root-and-library-root.md).
 #
-# After every `npm publish`, refresh the checksum with:
+# After every `npm publish`, refresh the checksum and push the tap with:
 #
-#   bash scripts/update-homebrew-formula.sh
+#   bash scripts/update-homebrew-formula.sh   # version + sha256
+#   bash scripts/publish-homebrew-tap.sh      # copy into the tap and push
 #
-# The checksum below is computed from the published npm tarball, so it is
-# only valid once the matching version exists on the registry.
+# The version is written into the URL literally rather than interpolated:
+# Homebrew's component order requires `url` to be declared before `version`,
+# so `#{version}` would interpolate an empty value at class-body evaluation
+# time. `scripts/update-homebrew-formula.sh` rewrites the URL, the version and
+# the checksum together, and fails if they disagree.
 class Skillcaddy < Formula
   desc "Local skill source library with project, global, and Hermes symlink scopes"
   homepage "https://github.com/chenweil/skillcaddy"
-  url "https://registry.npmjs.org/skillcaddy/-/skillcaddy-#{version}.tgz"
+  url "https://registry.npmjs.org/skillcaddy/-/skillcaddy-0.27.0.tgz"
   version "0.27.0"
   sha256 "06b881cdffb09f016e46f544b554ebfeb167d5be78dd04728aa9b48f3db52748"
   license "MIT"
