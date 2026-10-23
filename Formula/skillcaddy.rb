@@ -28,12 +28,11 @@ class Skillcaddy < Formula
   depends_on "node"
 
   def install
-    if build.head?
-      system "npm", "install", *std_npm_args, "."
-    else
-      system "npm", "install", *std_npm_args, cached_location/"skillcaddy-#{version}.tgz"
-    end
-    bin.install_symlink Dir["#{libexec}/bin/*"]
+    # Homebrew 已经把上面那个 tarball 下载、校验 sha256 并解包到 build 目录，
+    # 这里直接在该目录里安装：装的就是校验过的那份字节。
+    # `cached_location` 在新版 Homebrew 里已从 Formula 移除，所以不能从缓存路径取包。
+    system "npm", "install", *std_npm_args
+    bin.install_symlink libexec.glob("bin/*")
   end
 
   test do
